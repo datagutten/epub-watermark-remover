@@ -19,7 +19,15 @@ class remove_epub_watermark
 			{
 				$this->dir_input=substr($file_or_dir,0,-5);
 				if(!file_exists($this->dir_input))
-					shell_exec("unzip \"$file_or_dir\" -d \"{$this->dir_input}\" 2>&1");
+				{
+					if(PHP_OS==='WINNT')
+						shell_exec(sprintf('7-zip\\7za.exe x -r -o%s %s',$this->dir_input,$file_or_dir));
+					else
+						shell_exec(sprintf('unzip -d %s %s 2>&1',$this->dir_input,$file_or_dir));
+
+					if(!file_exists($this->dir_input))
+						die("Unzip failed\n");
+				}
 			}
 			else
 				die("Invalid file: $file_or_dir\n");
@@ -77,7 +85,7 @@ class remove_epub_watermark
 	}
 	function delete_dir($dir)
 	{
-		if (PHP_OS === 'Windows')
+		if (PHP_OS === 'WINNT')
 			exec("rd /s /q {$path}");
 		else
 			exec("rm -rf {$path}");
