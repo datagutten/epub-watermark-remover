@@ -21,9 +21,9 @@ class remove_epub_watermark
 				if(!file_exists($this->dir_input))
 				{
 					if(PHP_OS==='WINNT')
-						shell_exec(sprintf('"%s\\7-zip\\7za.exe" x -r -o%s %s',dirname(__FILE__),$this->dir_input,$file_or_dir));
+						shell_exec(sprintf('"%s\\7-zip\\7za.exe" x -r -o"%s" "%s"',dirname(__FILE__),$this->dir_input,$file_or_dir));
 					else
-						shell_exec(sprintf('unzip -d %s %s 2>&1',$this->dir_input,$file_or_dir));
+						shell_exec(sprintf('unzip -d "%s" "%s" 2>&1',$this->dir_input,$file_or_dir));
 
 					if(!file_exists($this->dir_input))
 						die("Unzip failed\n");
