@@ -4,15 +4,12 @@ if(!isset($remove_epub_watermark))
 	require 'class_remove_epub_watermark.php';
 	$remove_epub_watermark=new remove_epub_watermark($argv[1]);
 	$remove_epub_watermark->loadfiles();
+	$dom=new DOMDocument;
+	$dom->formatOutput=true;
 }
-
-//$dom=new DOMDocument;
-//$dom->formatOutput=true;
-
 
 $bad_tags=array('dc:rights');
 
-//var_dump($remove_epub_watermark->dir_input.'/'.$remove_epub_watermark->opf);
 $input_string=file_get_contents($remove_epub_watermark->opf); //Load opf file
 $data_dir=str_replace($remove_epub_watermark->dir_input,$remove_epub_watermark->dir_output,dirname($remove_epub_watermark->opf)); //Get the data directory on the outpath (used for checking if files exist)
 $dom->loadXML($input_string);
@@ -20,7 +17,6 @@ foreach($dom->getElementsByTagName('metadata')->item(0)->childNodes as $dc) //Pr
 {
 	if(isset($dc->tagName))
 	{
-		//var_dump($dc->tagName);
 		if($dc->tagName=='dc:rights')
 			$remove[]=$dc;
 		if($dc->tagName=='dc:identifier' && (empty($dc->attributes->getNamedItem('id')) || $dc->attributes->getNamedItem('id')->value!='ISBN')) //Remove all other ids than ISBN
@@ -32,7 +28,6 @@ foreach($dom->getElementsByTagName('metadata')->item(0)->childNodes as $dc) //Pr
 //Files that have not been copied into output directory by previous steps should be removed from the opf
 foreach($dom->getElementsByTagName('item') as $item) //Remove items for non-existing files
 {
-	var_dump($remove_epub_watermark->dir_output.'/'.$file);
 	$file=$item->attributes->getNamedItem('href')->value;
 	if(!file_exists($data_dir.'/'.$file) && substr($file,-3,3)!='ncx')
 		$remove[]=$item;
@@ -55,7 +50,6 @@ foreach($dom->getElementsByTagName('reference') as $reference)
 		$remove[]=$reference;
 }
 
-//print_r($remove);
 if(isset($remove))
 	$remove_epub_watermark->remove_elements($remove);
 else
