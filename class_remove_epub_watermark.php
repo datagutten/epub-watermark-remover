@@ -11,21 +11,22 @@ class remove_epub_watermark
 
 	function __construct($file_or_dir)
 	{
+		$pathinfo=pathinfo($file_or_dir);
 		if(!file_exists($file_or_dir))
 			die("$file_or_dir does not exist\n");
 		if(is_file($file_or_dir))
 		{
-			if(pathinfo($file_or_dir,PATHINFO_EXTENSION)=='epub')
+			if($pathinfo['extension']=='epub')
 			{
-				$this->dir_input=substr($file_or_dir,0,-5);
-				if(!file_exists($this->dir_input))
+				$this->dir_input=$pathinfo['dirname'].'/'.$pathinfo['filename']; //epub should be unpacked the a dir with the same name as the file
+				if(!file_exists($this->dir_input)) //Do not unpack again
 				{
 					if(PHP_OS==='WINNT')
 						shell_exec(sprintf('"%s\\7-zip\\7za.exe" x -r -o"%s" "%s"',dirname(__FILE__),$this->dir_input,$file_or_dir));
 					else
 						shell_exec(sprintf('unzip -d "%s" "%s" 2>&1',$this->dir_input,$file_or_dir));
 
-					if(!file_exists($this->dir_input))
+					if(!file_exists($this->dir_input)) //Check if unpacking was successful
 						die("Unzip failed\n");
 				}
 			}
@@ -36,8 +37,8 @@ class remove_epub_watermark
 		else
 			$this->dir_input=$file_or_dir;
 
-		$this->dir_output=$this->dir_input.'/../'.basename($this->dir_input).'_cleaned'; //Output dir should be on the same level as input
-		
+		$this->dir_output=$this->dir_input.'_cleaned'; //Output dir should be the samed as input with _cleaned added
+
 		if(!file_exists($this->dir_output))
 			mkdir($this->dir_output);
 	}
@@ -77,7 +78,7 @@ class remove_epub_watermark
 				elseif(!isset($pages))
 					$pages=$pages_temp;
 			}
-			elseif(array_search($extension,$this->safe_extensions)!==false || array_search($file,$this->safe_files)!==false) //Copy file
+			elseif(array_search($extension,$this->safe_extensions)!==false || array_search($file,$this->safe_files)!==false) //Safe files can be copied directly to output folder
 				copy($dir_from.'/'.$file,$dir_to.'/'.$file);
 		}
 		if(isset($pages))
