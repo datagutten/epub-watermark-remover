@@ -15,10 +15,8 @@ $dom->loadXML($input_string);
 $meta_tags=$dom->getElementsByTagName('meta');
 
 //Set uid to ISBN
-$uid_0_attributes=$meta_tags->item(0)->attributes;
-
-if($uid_0_attributes->item(0)->value=="dtb:uid")
-	$uid_0_attributes->item(1)->value=$remove_epub_watermark->isbn;
+if($meta_tags->item(0)->getAttribute('name')=='dtb:uid')
+	$meta_tags->item(0)->setAttribute('content',$remove_epub_watermark->isbn);
 else
 	echo "UID not found\n";
 
