@@ -30,7 +30,10 @@ foreach($dom->getElementsByTagName('item') as $item) //Remove items for non-exis
 {
 	$file=$item->attributes->getNamedItem('href')->value;
 	if(!file_exists($data_dir.'/'.$file) && substr($file,-3,3)!='ncx')
+	{
 		$remove[]=$item;
+		echo "Missing $file, removing from opf\n";
+	}
 	else
 	{
 		$id=$item->attributes->getNamedItem('id')->value;
