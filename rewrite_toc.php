@@ -37,7 +37,11 @@ foreach($dom->getElementsByTagName('navPoint') as $key=>$navPoint) //Rewrite pla
 	}*/
 	
 	$content_src[$key]=$navPoint->getElementsByTagName('content')->item(0)->attributes->item(0)->value;
-
+	if(!file_exists($remove_epub_watermark->dir_input.'/'.$content_src[$key]))
+	{
+		$remove[]=$navPoint;
+		continue;
+	}
 	if($key>1 && $content_src[$key]==$content_src[$key-1]) //If the content is the same as the previous element do not increment the playOrder
 		$playOrder--;
 
