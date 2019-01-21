@@ -7,10 +7,11 @@ class remove_epub_watermark
 	public $opf;
 	public $toc;
 	public $safe_files=array('cover.jpg','gyldendallogo.gif','mimetype','license','template.xpgt');
-	public $safe_extensions=array('otf','xml','css','js');
+	public $safe_extensions=array('otf','xml','css','js','gif','jpg','jpeg');
 
 	function __construct($file_or_dir)
 	{
+		$file_or_dir=realpath($file_or_dir);
 		$pathinfo=pathinfo($file_or_dir);
 		if(!file_exists($file_or_dir))
 			die("$file_or_dir does not exist\n");
@@ -80,15 +81,17 @@ class remove_epub_watermark
 			}
 			elseif(array_search($extension,$this->safe_extensions)!==false || array_search($file,$this->safe_files)!==false) //Safe files can be copied directly to output folder
 				copy($dir_from.'/'.$file,$dir_to.'/'.$file);
+			else
+				echo "Not copying $file ($extension)\n";
 		}
 		if(isset($pages))
 			return $pages;
 	}
-	function delete_dir($dir)
+	function delete_dir($path)
 	{
 		if (PHP_OS === 'WINNT')
-			exec("rd /s /q {$path}");
+			exec(sprintf('rd /s /q "%s"',$path));
 		else
-			exec("rm -rf {$path}");
+			exec(sprintf('rm -rf "%s"',$path));
 	}
 }
