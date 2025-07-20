@@ -94,4 +94,10 @@ class remove_epub_watermark
 		else
 			exec(sprintf('rm -rf "%s"',$path));
 	}
+
+	function build_epub()
+    {
+        shell_exec($cmd=sprintf('cd "%1$s" && zip -0 -X "%1$s.epub" mimetype 2>&1',$this->dir_output));
+        shell_exec($cmd=sprintf('cd "%1$s" && zip -rg "%1$s.epub" * -x mimetype 2>&1',$this->dir_output));
+    }
 }

@@ -47,10 +47,9 @@ require 'rewrite_toc.php';
 
 $output_epub=$remove_epub_watermark->dir_output.'.epub';
 echo "Creating new epub\n";
-if(PHP_OS=='WINNT')
-	shell_exec($cmd=sprintf('cd "%2$s" && "%1$s\\7-zip\\7za.exe" a -r -tzip "%2$s.epub" 2>&1',dirname(__FILE__),str_replace('/','\\',$remove_epub_watermark->dir_output)));
-else
-	shell_exec($cmd=sprintf('cd "%1$s" && zip -r "%1$s.epub" * 2>&1',$remove_epub_watermark->dir_output));
+
+$remove_epub_watermark->build_epub();
+	
 if(!file_exists($remove_epub_watermark->dir_output.'.epub'))
 	echo "epub creation failed\n";
 else
