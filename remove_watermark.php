@@ -1,6 +1,7 @@
 <?php
 
 use datagutten\EpubWatermarkRemover\EPUB;
+use datagutten\EpubWatermarkRemover\RewriteOPF;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -45,8 +46,10 @@ foreach($remove_epub_watermark->loadfiles() as $file)
 }
 //die();
 //unset($dom);
-echo "Rewrite OPF\n";
-require 'rewrite_opf.php';
+$opf = new RewriteOPF($remove_epub_watermark->opf, $remove_epub_watermark->dir_output);
+$opf->rewrite();
+$remove_epub_watermark->isbn = $opf->findISBN();
+
 echo "Rewrite TOC\n";
 require 'rewrite_toc.php';
 

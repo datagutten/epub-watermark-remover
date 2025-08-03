@@ -2,23 +2,18 @@
 
 namespace datagutten\EpubWatermarkRemover;
 
-use DOMDocument;
-use DOMXPath;
+use datagutten\epub\OPF;
 use RuntimeException;
 
-class RewriteOPF
+class RewriteOPF extends OPF
 {
-    public DOMDocument $dom;
-    private DOMXPath $xpath;
+    public string $isbn;
 
-    function __construct($opf_file)
+    function __construct($file, $epub_root)
     {
-        $this->dom = new DOMDocument;
+        parent::__construct($file, $epub_root);
         $this->dom->formatOutput = true;
-        $this->dom->load($opf_file);
-        $this->xpath = new DOMXPath($this->dom);
-        $this->xpath->registerNameSpace('dc', 'http://purl.org/dc/elements/1.1/');
-        $this->xpath->registerNameSpace('opf', 'http://www.idpf.org/2007/opf"');
+        $this->isbn = $this->findISBN();
     }
 
     /**
@@ -57,5 +52,20 @@ class RewriteOPF
             $tag->parentNode->removeChild($tag);
             printf("Remove dc:rights with value \"%s\"\n", $tag->nodeValue);
         }
+    }
+
+    public function rewrite(): string
+    {
+        //Remove all other ids than ISBN and save it for use in TOC
+        $this->strip_identifiers();
+        $this->strip_rights();
+        //Files that have not been copied into output directory by previous steps should be removed from the opf
+        $this->strip_missing();
+        $this->setPrimaryKey('ISBN');
+
+        $outfile = str_replace(dirname($this->file), $this->content_folder, $this->file);
+
+        $this->dom->save($outfile);
+        return $outfile;
     }
 }
