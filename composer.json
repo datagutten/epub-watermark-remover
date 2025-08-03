@@ -14,5 +14,7 @@
             "email": "datagutten@datagutten.net"
         }
     ],
-    "require": {}
+    "require": {
+        "symfony/process": "^7.3"
+    }
 }

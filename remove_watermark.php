@@ -1,4 +1,9 @@
 <?php
+
+use datagutten\EpubWatermarkRemover\EPUB;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 if(!isset($remove_epub_watermark))
 {
 	require 'class_remove_epub_watermark.php';
@@ -48,9 +53,8 @@ require 'rewrite_toc.php';
 $output_epub=$remove_epub_watermark->dir_output.'.epub';
 echo "Creating new epub\n";
 
-$remove_epub_watermark->build_epub();
-	
-if(!file_exists($remove_epub_watermark->dir_output.'.epub'))
+$epub_file = EPUB::build_epub($remove_epub_watermark->dir_output);
+if(!file_exists($epub_file))
 	echo "epub creation failed\n";
 else
 	echo sprintf("%s.epub was successfully created\n",$remove_epub_watermark->dir_output);
