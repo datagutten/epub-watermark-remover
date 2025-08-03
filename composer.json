@@ -1,0 +1,18 @@
+{
+    "name": "datagutten/epub-watermark-remover",
+    "description": "Remove watermarks from epub files",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "datagutten\\EpubWatermarkRemover\\": "src/"
+        },
+        "classmap": ["class_remove_epub_watermark.php"]
+    },
+    "authors": [
+        {
+            "name": "Anders Birkenes",
+            "email": "datagutten@datagutten.net"
+        }
+    ],
+    "require": {}
+}

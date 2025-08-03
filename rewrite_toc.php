@@ -4,8 +4,8 @@ if(!isset($remove_epub_watermark))
 	require 'class_remove_epub_watermark.php';
 	$remove_epub_watermark=new remove_epub_watermark($argv[1]);
 }
-//$dom=new DOMDocument;
-//$dom->formatOutput=true;
+$dom=new DOMDocument;
+$dom->formatOutput=true;
 
 $input_string=file_get_contents($remove_epub_watermark->toc); //Load toc.ncx
 $head=substr($input_string,0,strpos($input_string,'<head>'));

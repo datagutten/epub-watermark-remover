@@ -1,30 +1,25 @@
 <?Php
+
+use datagutten\EpubWatermarkRemover\RewriteOPF;
+
+require_once __DIR__ . '/vendor/autoload.php';
 if(!isset($remove_epub_watermark))
 {
 	require 'class_remove_epub_watermark.php';
 	$remove_epub_watermark=new remove_epub_watermark($argv[1]);
 	$remove_epub_watermark->loadfiles();
-	$dom=new DOMDocument;
-	$dom->formatOutput=true;
 }
+$opf = new RewriteOPF($remove_epub_watermark->opf);
+$dom = $opf->dom;
 
-$bad_tags=array('dc:rights');
-
-$input_string=file_get_contents($remove_epub_watermark->opf); //Load opf file
+//$input_string=file_get_contents($remove_epub_watermark->opf); //Load opf file
+//$input_string = preg_replace("/>\s+</", "><", $input_string); //Remove whitespace between tags
 $data_dir=str_replace($remove_epub_watermark->dir_input,$remove_epub_watermark->dir_output,dirname($remove_epub_watermark->opf)); //Get the data directory on the outpath (used for checking if files exist)
-$dom->loadXML($input_string);
-foreach($dom->getElementsByTagName('metadata')->item(0)->childNodes as $dc) //Process metadata
-{
-	if(isset($dc->tagName))
-	{
-		if($dc->tagName=='dc:rights')
-			$remove[]=$dc;
-		if($dc->tagName=='dc:identifier' && (empty($dc->attributes->getNamedItem('id')) || $dc->attributes->getNamedItem('id')->value!='ISBN')) //Remove all other ids than ISBN
-			$remove[]=$dc;
-		elseif(!empty($dc->attributes->getNamedItem('id')) && $dc->attributes->getNamedItem('id')->value=='ISBN') //Get ISBN and save it for use in TOC
-			$remove_epub_watermark->isbn=$dc->nodeValue;
-	}
-}
+
+//Remove all other ids than ISBN and save it for use in TOC
+$remove_epub_watermark->isbn = $opf->strip_identifiers();
+$opf->strip_rights();
+
 //Files that have not been copied into output directory by previous steps should be removed from the opf
 foreach($dom->getElementsByTagName('item') as $item) //Remove items for non-existing files
 {
