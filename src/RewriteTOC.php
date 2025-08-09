@@ -73,4 +73,13 @@ class RewriteTOC
             $navPoint->setAttribute('playOrder', $playOrder); //Set new playOrder
         }
     }
+
+    function rewrite(string $output_file, string $isbn = null): string
+    {
+        if ($isbn)
+            $this->setUID($isbn);
+        $this->rewriteNavMap();
+        $this->dom->save($output_file);
+        return $output_file;
+    }
 }

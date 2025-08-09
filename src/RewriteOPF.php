@@ -3,7 +3,6 @@
 namespace datagutten\EpubWatermarkRemover;
 
 use datagutten\epub\OPF;
-use RuntimeException;
 
 class RewriteOPF extends OPF
 {
@@ -50,7 +49,7 @@ class RewriteOPF extends OPF
         }
     }
 
-    public function rewrite(): string
+    public function rewrite($output_file): string
     {
         //Remove all other ids than ISBN and save it for use in TOC
         $this->strip_identifiers();
@@ -59,9 +58,7 @@ class RewriteOPF extends OPF
         $this->strip_missing();
         $this->setPrimaryKey('ISBN');
 
-        $outfile = str_replace(dirname($this->file), $this->content_folder, $this->file);
-
-        $this->dom->save($outfile);
-        return $outfile;
+        $this->dom->save($output_file);
+        return $output_file;
     }
 }

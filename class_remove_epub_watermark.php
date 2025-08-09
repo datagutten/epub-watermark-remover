@@ -1,4 +1,11 @@
 <?Php
+
+use datagutten\EpubWatermarkRemover\EPUB;
+use datagutten\tools\files\files;
+use Symfony\Component\Filesystem;
+use Symfony\Component\Yaml\Yaml;
+
+
 class remove_epub_watermark
 {
 	public $dir_input;
@@ -94,4 +101,16 @@ class remove_epub_watermark
 		else
 			exec(sprintf('rm -rf "%s"',$path));
 	}
+
+    /**
+     * Get output file with correct directory separator
+     * @param string $input_file Input file
+     * @return string Output file
+     */
+    public function output_file(string $input_file): string
+    {
+        $relative = Filesystem\Path::makeRelative($input_file, $this->dir_input);
+        $absolute = Filesystem\Path::makeAbsolute($relative, $this->dir_output);
+        return str_replace('/', DIRECTORY_SEPARATOR, $absolute);
+    }
 }
