@@ -19,8 +19,8 @@ foreach($remove_epub_watermark->loadfiles() as $file)
     $page->strip_meta();
     $output_string = $page->strip_strings($remove_epub_watermark->config['bad_string_regex']);
 
-	$outfile=str_replace($remove_epub_watermark->dir_input,$remove_epub_watermark->dir_output,$file);
-	file_put_contents($outfile,trim($output_string));
+    $output_file = $remove_epub_watermark->output_file($file);
+    file_put_contents($output_file, trim($output_string));
 }
 
 foreach (files::get_files($remove_epub_watermark->dir_output, ['xhtml']) as $file)
