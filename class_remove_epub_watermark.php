@@ -1,7 +1,6 @@
 <?Php
 
 use datagutten\EpubWatermarkRemover\EPUB;
-use datagutten\tools\files\files;
 use Symfony\Component\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
@@ -14,6 +13,7 @@ class remove_epub_watermark
 	public $isbn;
 	public $opf;
 	public $toc;
+    public EPUB $epub;
 	public $safe_files=array('cover.jpg','gyldendallogo.gif','mimetype','license','template.xpgt');
     public $safe_extensions = array('otf', 'xml', 'css', 'js', 'gif', 'jpg', 'jpeg', 'png');
 
@@ -21,31 +21,8 @@ class remove_epub_watermark
 	{
         $this->config = Yaml::parseFile(__DIR__.'/config.yml');
 		$file_or_dir=realpath($file_or_dir);
-		$pathinfo=pathinfo($file_or_dir);
-		if(!file_exists($file_or_dir))
-			die("$file_or_dir does not exist\n");
-		if(is_file($file_or_dir))
-		{
-			if($pathinfo['extension']=='epub')
-			{
-				$this->dir_input=$pathinfo['dirname'].'/'.$pathinfo['filename']; //epub should be unpacked the a dir with the same name as the file
-				if(!file_exists($this->dir_input)) //Do not unpack again
-				{
-					if(PHP_OS==='WINNT')
-						shell_exec(sprintf('"%s\\7-zip\\7za.exe" x -r -o"%s" "%s"',dirname(__FILE__),$this->dir_input,$file_or_dir));
-					else
-						shell_exec(sprintf('unzip -d "%s" "%s" 2>&1',$this->dir_input,$file_or_dir));
-
-					if(!file_exists($this->dir_input)) //Check if unpacking was successful
-						die("Unzip failed\n");
-				}
-			}
-			else
-				die("Invalid file: $file_or_dir\n");
-				//$this->dir_input=dirname($file_or_dir);
-		}
-		else
-			$this->dir_input=$file_or_dir;
+        $this->epub = new EPUB($file_or_dir, $this->dir_input);
+        $this->dir_input = $this->epub->folder;
 
 		$this->dir_output=$this->dir_input.'_cleaned'; //Output dir should be the samed as input with _cleaned added
 
@@ -78,7 +55,7 @@ class remove_epub_watermark
 				$this->opf=$dir_from.'/'.$file; //Save opf filename and path
 			elseif($file=='toc.ncx')
 				$this->toc=$dir_from.'/'.$file;
-			elseif($extension=='xhtml' && $file!='rights.xhtml') //Add file to page list
+			elseif(($extension=='xhtml' || $extension=='html') && $file!='rights.xhtml') //Add file to page list
 				$pages[]=$dir_from.'/'.$file;
 			elseif(is_dir($dir_from.'/'.$file) && $file!='.' && $file!='..') //Recurse into subdir
 			{
