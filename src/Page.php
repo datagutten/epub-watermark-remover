@@ -49,16 +49,6 @@ class Page
     }
 
     /**
-     * Remove bookmark from link
-     * @param string $link
-     * @return string
-     */
-    public static function clean_link(string $link): string
-    {
-        return preg_replace('/(.+\.\w+)(?:#.+)?/', '$1', $link);
-    }
-
-    /**
      * Check if linked files exists and remove links to non-existing files
      * @return void
      */
@@ -71,7 +61,7 @@ class Page
         /** @var DOMElement $link */
         foreach ($links as $link)
         {
-            $link_path = self::clean_link($link->getAttribute('href'));
+            $link_path = EPUB::clean_link($link->getAttribute('href'));
             if (str_contains($link_path, '://'))
                 continue; //Link with scheme
 
