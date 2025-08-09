@@ -6,23 +6,8 @@ use datagutten\tools\files\files;
 use DOMDocument;
 use Symfony\Component\Process\Process;
 
-class EPUB
+class EPUB extends \datagutten\epub\EPUB
 {
-    /**
-     * Build epub from folder
-     * @param string $folder
-     * @return string
-     */
-    public static function build_epub(string $folder): string
-    {
-        $epub_file = sprintf('%s.epub', $folder);
-        $process = new Process(['zip', '-0', '-X', $epub_file, 'mimetype'], $folder);
-        $process->mustRun();
-        $process = new Process(['zip', '-rg', $epub_file, '.', '-x', 'mimetype'], $folder);
-        $process->mustRun();
-        return $epub_file;
-    }
-
     public static function link_to_file(string $link, string $book_path): string
     {
         return files::path_join($book_path, 'OEBPS', preg_replace('/(.+\.\w+)(?:#.+)?/', '$1', $link));
