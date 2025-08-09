@@ -4,12 +4,7 @@ use datagutten\EpubWatermarkRemover\EPUB;
 use datagutten\EpubWatermarkRemover\RewriteOPF;
 
 require_once __DIR__ . '/vendor/autoload.php';
-
-if(!isset($remove_epub_watermark))
-{
-	require 'class_remove_epub_watermark.php';
-	$remove_epub_watermark=new remove_epub_watermark($argv[1]);
-}
+$remove_epub_watermark=new remove_epub_watermark($argv[1]);
 
 $dom=new DOMDocument;
 $dom->formatOutput=true;
