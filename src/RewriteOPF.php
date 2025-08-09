@@ -17,31 +17,27 @@ class RewriteOPF extends OPF
     }
 
     /**
-     * Remove unknown identifiers and normalize ISBN
+     * Remove all identifiers and add normalized ISBN
      * @return string ISBN
      */
     function strip_identifiers(): string
     {
+        $metadata = $this->xpath->query('/opf:package/opf:metadata')->item(0);
         $identifiers = $this->xpath->query('//dc:identifier');
+
         foreach ($identifiers as $identifier)
         {
             $id = $identifier->getAttribute('id');
-            if (stripos($id, 'isbn') !== false || stripos($identifier->nodeValue, 'isbn') !== false)
-            {
-                $identifier->setAttribute('id', 'ISBN');
-                $identifier->nodeValue = preg_replace('/\D*(\d+)/', '$1', $identifier->nodeValue);
-                $isbn = $identifier->nodeValue; //Get ISBN and save it for use in TOC
-            }
-            else
-            {
-                $identifier->parentNode->removeChild($identifier);
-                printf("Remove identifier %s with value \"%s\"\n", $id, $identifier->nodeValue);
-            }
-        }
-        if (empty($isbn))
-            throw new RuntimeException('ISBN not found in OPF');
+            $metadata->removeChild($identifier);
+            printf("Remove identifier %s with value \"%s\"\n", $id, $identifier->nodeValue);
 
-        return $isbn;
+        }
+        $identifier = $this->dom->createElement('dc:identifier', $this->isbn);
+        $identifier->setAttribute('id', 'ISBN');
+        $identifier->setAttribute('opf:scheme', 'ISBN');
+        $metadata->appendChild($identifier);
+
+        return $this->isbn;
     }
 
     function strip_rights(): void
