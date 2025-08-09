@@ -46,4 +46,9 @@ $epub_file = EPUBUtils::buildEPUB($remove_epub_watermark->dir_output);
 if(!file_exists($epub_file))
 	echo "epub creation failed\n";
 else
+{
+	$remove_epub_watermark->delete_dir($remove_epub_watermark->dir_output);
+	if(is_file($argv[1]))
+	    $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_input);
 	echo sprintf("%s.epub was successfully created\n",$remove_epub_watermark->dir_output);
+}
