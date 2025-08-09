@@ -10,6 +10,7 @@ class remove_epub_watermark
 {
 	public $dir_input;
 	public $dir_output;
+    public array $config;
 	public $isbn;
 	public $opf;
 	public $toc;
@@ -18,6 +19,7 @@ class remove_epub_watermark
 
 	function __construct($file_or_dir)
 	{
+        $this->config = Yaml::parseFile(__DIR__.'/config.yml');
 		$file_or_dir=realpath($file_or_dir);
 		$pathinfo=pathinfo($file_or_dir);
 		if(!file_exists($file_or_dir))
@@ -70,7 +72,9 @@ class remove_epub_watermark
 		{
 			$extension=pathinfo($file,PATHINFO_EXTENSION);
 			//echo $file."\n";
-			if($extension=='opf')
+            if (in_array($file, $this->config['bad_files']) || in_array(basename($file), $this->config['bad_files']))
+                printf("Bad file %s\n", $file);
+            elseif ($extension == 'opf')
 				$this->opf=$dir_from.'/'.$file; //Save opf filename and path
 			elseif($file=='toc.ncx')
 				$this->toc=$dir_from.'/'.$file;
