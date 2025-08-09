@@ -23,6 +23,12 @@ foreach($remove_epub_watermark->loadfiles() as $file)
 	file_put_contents($outfile,trim($output_string));
 }
 
+foreach (files::get_files($remove_epub_watermark->dir_output, ['xhtml']) as $file)
+{
+    $page = new Page($file);
+    $page->check_links();
+}
+
 $opf = new RewriteOPF($remove_epub_watermark->opf, $remove_epub_watermark->dir_output);
 $opf->rewrite();
 $toc = new RewriteTOC($remove_epub_watermark->toc, $opf->content_folder);
@@ -32,12 +38,6 @@ $toc->rewriteNavMap();
 $outfile=str_replace($remove_epub_watermark->dir_input,$remove_epub_watermark->dir_output,$remove_epub_watermark->toc);
 $toc->dom->save($outfile);
 
-try
-{
-    $remove_epub_watermark->epub->check_links(files::path_join($remove_epub_watermark->dir_output, 'OEBPS', 'toc.xhtml'));
-} catch (FileNotFoundException $e)
-{
-}
 
 $output_epub=$remove_epub_watermark->dir_output.'.epub';
 echo "Creating new epub\n";

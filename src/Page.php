@@ -3,7 +3,9 @@
 namespace datagutten\EpubWatermarkRemover;
 
 use DOMDocument;
+use DOMElement;
 use FileNotFoundException;
+use Symfony\Component\Filesystem;
 
 class Page
 {
@@ -44,6 +46,48 @@ class Page
             }
         }
         $this->changed = true;
+    }
+
+    /**
+     * Remove bookmark from link
+     * @param string $link
+     * @return string
+     */
+    public static function clean_link(string $link): string
+    {
+        return preg_replace('/(.+\.\w+)(?:#.+)?/', '$1', $link);
+    }
+
+    /**
+     * Check if linked files exists and remove links to non-existing files
+     * @return void
+     */
+    public function check_links(): void
+    {
+        $links = $this->dom->getElementsByTagName('a');
+        if ($links->length == 0)
+            return;
+
+        /** @var DOMElement $link */
+        foreach ($links as $link)
+        {
+            $link_path = self::clean_link($link->getAttribute('href'));
+            if (str_contains($link_path, '://'))
+                continue; //Link with scheme
+
+            if (empty($link_path))
+                continue;
+            $file_path = Filesystem\Path::makeAbsolute($link_path, dirname($this->file));
+            if (file_exists($file_path))
+                continue;
+
+            if ($link->parentNode->childNodes->length == 1) //Link has no siblings, remove parent
+                $link->parentNode->parentNode->removeChild($link->parentNode);
+            else
+                $link->parentNode->removeChild($link);
+            printf("Removing link to %s from %s\n", $link_path, $this->file);
+        }
+        $this->dom->save($this->file);
     }
 
     public function strip_strings(array $bad_string_regex): string
