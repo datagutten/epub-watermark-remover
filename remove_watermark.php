@@ -3,6 +3,8 @@
 use datagutten\EpubWatermarkRemover\EPUB;
 use datagutten\EpubWatermarkRemover\Page;
 use datagutten\EpubWatermarkRemover\RewriteOPF;
+use datagutten\EpubWatermarkRemover\RewriteTOC;
+use datagutten\tools\files\files;
 
 require_once __DIR__ . '/vendor/autoload.php';
 $remove_epub_watermark=new remove_epub_watermark($argv[1]);
@@ -23,15 +25,24 @@ foreach($remove_epub_watermark->loadfiles() as $file)
 
 $opf = new RewriteOPF($remove_epub_watermark->opf, $remove_epub_watermark->dir_output);
 $opf->rewrite();
-$remove_epub_watermark->isbn = $opf->findISBN();
+$toc = new RewriteTOC($remove_epub_watermark->toc, $opf->content_folder);
+$toc->setUID($opf->isbn);
 
-echo "Rewrite TOC\n";
-require 'rewrite_toc.php';
+$toc->rewriteNavMap();
+$outfile=str_replace($remove_epub_watermark->dir_input,$remove_epub_watermark->dir_output,$remove_epub_watermark->toc);
+$toc->dom->save($outfile);
+
+try
+{
+    $remove_epub_watermark->epub->check_links(files::path_join($remove_epub_watermark->dir_output, 'OEBPS', 'toc.xhtml'));
+} catch (FileNotFoundException $e)
+{
+}
 
 $output_epub=$remove_epub_watermark->dir_output.'.epub';
 echo "Creating new epub\n";
 
-$epub_file = EPUB::build_epub($remove_epub_watermark->dir_output);
+$epub_file = EPUBUtils::buildEPUB($remove_epub_watermark->dir_output);
 if(!file_exists($epub_file))
 	echo "epub creation failed\n";
 else

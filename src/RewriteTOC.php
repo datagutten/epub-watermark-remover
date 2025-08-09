@@ -2,7 +2,6 @@
 
 namespace datagutten\EpubWatermarkRemover;
 
-use datagutten\tools\files\files;
 use DOMDocument;
 use DOMXPath;
 use FileNotFoundException;
@@ -11,9 +10,13 @@ class RewriteTOC
 {
     public DOMDocument $dom;
     private DOMXPath $xpath;
-    private string $output_folder;
 
-    function __construct(string $toc_file, string $output_folder)
+    /**
+     * @var string Epub content subfolder
+     */
+    private string $content_folder;
+
+    function __construct(string $toc_file, string $content_folder)
     {
         $this->dom = new DOMDocument;
         $this->dom->formatOutput = true;
@@ -21,7 +24,16 @@ class RewriteTOC
         $this->dom->load($toc_file);
         $this->xpath = new DOMXPath($this->dom);
         $this->xpath->registerNamespace('ncx', 'http://www.daisy.org/z3986/2005/ncx/');
-        $this->output_folder = $output_folder;
+        $this->content_folder = $content_folder;
+    }
+
+    public function setUID(string $uid): void
+    {
+        $uid_obj = $this->xpath->query('//ncx:head/ncx:meta[@name="dtb:uid"]');
+        if ($uid_obj->length == 0)
+            throw new \RuntimeException('UID tag not found');
+        $uid_obj = $uid_obj->item(0);
+        $uid_obj->setAttribute('content', $uid);
     }
 
     public function rewriteNavMap(): void
@@ -30,7 +42,6 @@ class RewriteTOC
         $playOrder = 0;
         $navMap = $this->xpath->query('//ncx:navMap')->item(0);
         foreach ($this->xpath->query('.//ncx:navPoint', $navMap) as $key => $navPoint)
-        //foreach ($this->dom->getElementsByTagName('navPoint') as $key=>$navPoint)
         {
             $id = $navPoint->getAttribute('id');
             if ($id == 'rights')
@@ -43,7 +54,8 @@ class RewriteTOC
             try
             {
                 $files[$key] = EPUB::link_to_file($src, $this->content_folder);
-            } catch (FileNotFoundException)
+            }
+            catch (FileNotFoundException)
             {
                 printf("Remove navPoint for removed file \"%s\"\n", $src);
                 $navMap->removeChild($navPoint);
@@ -59,8 +71,6 @@ class RewriteTOC
                                 $playOrder--;*/
 
             $navPoint->setAttribute('playOrder', $playOrder); //Set new playOrder
-            //$navPoint->setAttribute('check', 'check');
-            //$playOrder++;
         }
     }
 }
