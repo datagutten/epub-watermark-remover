@@ -5,6 +5,7 @@ namespace datagutten\EpubWatermarkRemover;
 use datagutten\tools\files\files;
 use DOMDocument;
 use DOMXPath;
+use FileNotFoundException;
 
 class RewriteTOC
 {
@@ -39,10 +40,10 @@ class RewriteTOC
             }
             $content = $this->xpath->query('.//ncx:content', $navPoint)->item(0);
             $src = $content->getAttribute('src');
-            //$files[$key] = files::path_join($this->output_folder, 'OEBPS', preg_replace('/(.+\.\w+)(?:#.+)?/', '$1', $src));
-            $files[$key] = EPUB::link_to_file($src, $this->output_folder);
-
-            if (!file_exists($files[$key]))
+            try
+            {
+                $files[$key] = EPUB::link_to_file($src, $this->content_folder);
+            } catch (FileNotFoundException)
             {
                 printf("Remove navPoint for removed file \"%s\"\n", $src);
                 $navMap->removeChild($navPoint);
