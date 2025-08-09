@@ -1,18 +1,15 @@
 <?php
 
-use datagutten\EpubWatermarkRemover\EPUB;
+use datagutten\epub\EPUBUtils;
 use datagutten\EpubWatermarkRemover\Page;
 use datagutten\EpubWatermarkRemover\RewriteOPF;
 use datagutten\EpubWatermarkRemover\RewriteTOC;
 use datagutten\tools\files\files;
 
 require_once __DIR__ . '/vendor/autoload.php';
-$remove_epub_watermark=new remove_epub_watermark($argv[1]);
+$remove_epub_watermark = new remove_epub_watermark($argv[1]);
 
-$dom=new DOMDocument;
-$dom->formatOutput=true;
-
-foreach($remove_epub_watermark->loadfiles() as $file)
+foreach ($remove_epub_watermark->loadfiles() as $file) //Loop through the pages
 {
     $page = new Page($file);
     $dom = $page->dom;
@@ -35,16 +32,16 @@ $opf->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->opf));
 $toc = new RewriteTOC($remove_epub_watermark->toc, $opf->content_folder);
 $toc->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->toc), $opf->isbn);
 
-$output_epub=$remove_epub_watermark->dir_output.'.epub';
+$output_epub = $remove_epub_watermark->dir_output . '.epub';
 echo "Creating new epub\n";
 
 $epub_file = EPUBUtils::buildEPUB($remove_epub_watermark->dir_output);
-if(!file_exists($epub_file))
-	echo "epub creation failed\n";
+if (!file_exists($epub_file))
+    echo "epub creation failed\n";
 else
 {
-	$remove_epub_watermark->delete_dir($remove_epub_watermark->dir_output);
-	if(is_file($argv[1]))
-	    $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_input);
-	echo sprintf("%s.epub was successfully created\n",$remove_epub_watermark->dir_output);
+    $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_output);
+    if (is_file($argv[1]))
+        $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_input);
+    echo sprintf("%s.epub was successfully created\n", $remove_epub_watermark->dir_output);
 }

@@ -1,21 +1,27 @@
 <?Php
 
 use datagutten\EpubWatermarkRemover\EPUB;
+use datagutten\tools\files\files;
 use Symfony\Component\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 
 class remove_epub_watermark
 {
-	public $dir_input;
-	public $dir_output;
+    public string $dir_input;
+    public string $dir_output;
     public array $config;
-	public $isbn;
-	public $opf;
-	public $toc;
+    /**
+     * @var string OPF file path
+     */
+    public string $opf;
+    /**
+     * @var string OPF file path
+     */
+    public string $toc;
     public EPUB $epub;
-	public $safe_files=array('cover.jpg','gyldendallogo.gif','mimetype','license','template.xpgt');
-    public $safe_extensions = array('otf', 'xml', 'css', 'js', 'gif', 'jpg', 'jpeg', 'png');
+    public array $safe_files = array('cover.jpg', 'gyldendallogo.gif', 'mimetype', 'license', 'template.xpgt');
+    public array $safe_extensions = array('otf', 'xml', 'css', 'js', 'gif', 'jpg', 'jpeg', 'png');
 
 	function __construct($file_or_dir)
 	{
@@ -28,16 +34,6 @@ class remove_epub_watermark
 
 		if(!file_exists($this->dir_output))
 			mkdir($this->dir_output);
-	}
-	function remove_elements($domElemsToRemove)
-	{
-		//http://php.net/manual/en/domnode.removechild.php#90292
-		foreach($domElemsToRemove as $domElement)
-		{ 
-			if(!is_object($domElement->parentNode))
-				print_r($domElement);
-			$domElement->parentNode->removeChild($domElement); 
-		}
 	}
 	function loadfiles($dir_from=false,$dir_to=false)
 	{
