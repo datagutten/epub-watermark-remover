@@ -1,0 +1,5 @@
+services:
+  watermark:
+    build: .
+    volumes:
+      - ./config.yml:/app/config.yml
