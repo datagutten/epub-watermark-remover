@@ -20,7 +20,7 @@ class Page
         $this->dom = new DOMDocument();
         $this->dom->formatOutput = true;
         //$dom->preserveWhiteSpace = false;
-        $this->dom->load($page_file);
+        @$this->dom->load($page_file);
         $this->file = $page_file;
     }
 
