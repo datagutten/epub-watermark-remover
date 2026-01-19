@@ -3,6 +3,7 @@
 namespace datagutten\EpubWatermarkRemover;
 
 use datagutten\epub\OPF;
+use datagutten\tools\files\files;
 
 class RewriteOPF extends OPF
 {
@@ -13,6 +14,10 @@ class RewriteOPF extends OPF
         parent::__construct($file, $epub_root);
         $this->dom->formatOutput = true;
         $this->isbn = $this->findISBN();
+        if (dirname($file) == str_replace('_cleaned', '', $epub_root))
+            $this->content_folder = $epub_root;
+        else
+            $this->content_folder = files::path_join($this->output_folder, basename(dirname($file)));
     }
 
     /**
