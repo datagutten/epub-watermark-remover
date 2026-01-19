@@ -6,6 +6,8 @@ WORKDIR /app
 COPY composer.json .
 COPY src src
 COPY class_remove_epub_watermark.php .
+COPY remove_watermark.php .
+COPY config.yml .
 
 RUN composer update
 
