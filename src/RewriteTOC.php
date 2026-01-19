@@ -74,7 +74,7 @@ class RewriteTOC
         }
     }
 
-    function rewrite(string $output_file, string $isbn = null): string
+    function rewrite(string $output_file, ?string $isbn = null): string
     {
         if ($isbn)
             $this->setUID($isbn);
