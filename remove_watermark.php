@@ -7,7 +7,14 @@ use datagutten\EpubWatermarkRemover\RewriteTOC;
 use datagutten\tools\files\files;
 
 require_once __DIR__ . '/vendor/autoload.php';
-$remove_epub_watermark = new remove_epub_watermark($argv[1]);
+try
+{
+    $remove_epub_watermark = new remove_epub_watermark($argv[1]);
+}
+catch (FileNotFoundException $e)
+{
+    die($e);
+}
 
 foreach ($remove_epub_watermark->loadfiles() as $file) //Loop through the pages
 {

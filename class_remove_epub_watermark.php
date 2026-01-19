@@ -25,6 +25,8 @@ class remove_epub_watermark
 
 	function __construct($file_or_dir)
 	{
+        if (!file_exists($file_or_dir))
+            throw new FileNotFoundException($file_or_dir);
         $this->config = Yaml::parseFile(__DIR__.'/config.yml');
 		$file_or_dir=realpath($file_or_dir);
         $pathinfo = pathinfo($file_or_dir);
