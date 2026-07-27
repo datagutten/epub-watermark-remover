@@ -64,6 +64,8 @@ class Page
             $link_path = EPUB::clean_link($link->getAttribute('href'));
             if (str_contains($link_path, '://'))
                 continue; //Link with scheme
+            if (str_contains($link_path, 'mailto:'))
+                continue;
 
             if (empty($link_path))
                 continue;
