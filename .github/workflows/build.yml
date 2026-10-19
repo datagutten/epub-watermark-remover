@@ -1,0 +1,25 @@
+name: Build Docker image
+
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  push_to_registry:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6.5.0
+        with:
+          push: false
+
