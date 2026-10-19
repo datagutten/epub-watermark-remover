@@ -1,4 +1,4 @@
-FROM php:8.4
+FROM php:8.5
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN apt-get update && apt-get install -y libzip-dev zip
 
