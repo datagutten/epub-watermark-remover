@@ -35,9 +35,11 @@ foreach (files::get_files($remove_epub_watermark->dir_output, ['xhtml']) as $fil
 
 $opf = new RewriteOPF($remove_epub_watermark->opf, $remove_epub_watermark->dir_output);
 $opf->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->opf));
-
-$toc = new RewriteTOC($remove_epub_watermark->toc, $opf->content_folder);
-$toc->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->toc), $opf->isbn);
+if (isset($remove_epub_watermark->toc))
+{
+    $toc = new RewriteTOC($remove_epub_watermark->toc, $opf->content_folder);
+    $toc->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->toc), $opf->isbn);
+}
 
 $output_epub = $remove_epub_watermark->dir_output . '.epub';
 echo "Creating new epub\n";
