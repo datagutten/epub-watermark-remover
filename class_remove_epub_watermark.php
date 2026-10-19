@@ -20,7 +20,7 @@ class remove_epub_watermark
      */
     public string $toc;
     public EPUB $epub;
-    public array $safe_files = array('cover.jpg', 'gyldendallogo.gif', 'mimetype', 'license', 'template.xpgt');
+    public array $safe_files = ['mimetype', 'license', 'template.xpgt'];
 
 	function __construct($file_or_dir)
 	{
