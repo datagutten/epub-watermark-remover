@@ -41,10 +41,8 @@ if (isset($remove_epub_watermark->toc))
     $toc->rewrite($remove_epub_watermark->output_file($remove_epub_watermark->toc), $opf->isbn);
 }
 
-$output_epub = $remove_epub_watermark->dir_output . '.epub';
 echo "Creating new epub\n";
-
-$epub_file = EPUBUtils::buildEPUB($remove_epub_watermark->dir_output);
+$epub_file = EPUBUtils::buildEPUB($remove_epub_watermark->dir_output, $argv[2] ?? null);
 if (!file_exists($epub_file))
     echo "epub creation failed\n";
 else
@@ -52,5 +50,5 @@ else
     $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_output);
     if (is_file($argv[1]))
         $remove_epub_watermark->delete_dir($remove_epub_watermark->dir_input);
-    echo sprintf("%s.epub was successfully created\n", $remove_epub_watermark->dir_output);
+    echo sprintf("%s was successfully created\n", $epub_file);
 }
