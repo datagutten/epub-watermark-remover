@@ -21,7 +21,6 @@ class remove_epub_watermark
     public string $toc;
     public EPUB $epub;
     public array $safe_files = array('cover.jpg', 'gyldendallogo.gif', 'mimetype', 'license', 'template.xpgt');
-    public array $safe_extensions = array('otf', 'xml', 'css', 'js', 'gif', 'jpg', 'jpeg', 'png');
 
 	function __construct($file_or_dir)
 	{
@@ -65,7 +64,7 @@ class remove_epub_watermark
 				elseif(!isset($pages))
 					$pages=$pages_temp;
 			}
-			elseif(array_search($extension,$this->safe_extensions)!==false || array_search($file,$this->safe_files)!==false) //Safe files can be copied directly to output folder
+			elseif(in_array($extension, $this->config['safe_extensions'] ?? []) || in_array($file, $this->safe_files)) //Safe files can be copied directly to output folder
 				copy($dir_from.'/'.$file,$dir_to.'/'.$file);
 			else
 				echo "Not copying $file ($extension)\n";
