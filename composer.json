@@ -16,7 +16,7 @@
     ],
     "require": {
         "symfony/process": "^7.3",
-        "symfony/yaml": "^7.3",
+        "symfony/yaml": "^8.1",
         "datagutten/tools": "^1.12",
         "datagutten/epub-tools": "dev-master"
     }
