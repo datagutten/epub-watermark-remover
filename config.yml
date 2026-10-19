@@ -1,0 +1,13 @@
+bad_files:
+ - epub.html
+
+safe_extensions:
+    - 'otf'
+    - 'ttf'
+    - 'xml'
+    - 'css'
+    - 'js'
+    - 'gif'
+    - 'jpg'
+    - 'jpeg'
+    - 'png'
