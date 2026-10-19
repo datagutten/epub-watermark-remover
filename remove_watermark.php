@@ -21,7 +21,7 @@ foreach ($remove_epub_watermark->loadfiles() as $file) //Loop through the pages
     $page = new Page($file);
     $dom = $page->dom;
     $page->strip_meta();
-    $output_string = $page->strip_strings($remove_epub_watermark->config['bad_string_regex']);
+    $output_string = $page->strip_strings($remove_epub_watermark->config['bad_string_regex'] ?? []);
 
     $output_file = $remove_epub_watermark->output_file($file);
     file_put_contents($output_file, trim($output_string));
