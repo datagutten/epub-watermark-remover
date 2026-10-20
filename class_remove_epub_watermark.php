@@ -66,7 +66,7 @@ class remove_epub_watermark
 			}
 			elseif(in_array($extension, $this->config['safe_extensions'] ?? []) || in_array($file, $this->safe_files)) //Safe files can be copied directly to output folder
 				copy($dir_from.'/'.$file,$dir_to.'/'.$file);
-			else
+			elseif(!in_array($file, ['.', '..']))
 				echo "Not copying $file ($extension)\n";
 		}
 		if(isset($pages))
