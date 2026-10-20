@@ -29,7 +29,7 @@ class remove_epub_watermark
         $this->config = Yaml::parseFile(__DIR__.'/config.yml');
 		$file_or_dir=realpath($file_or_dir);
         $pathinfo = pathinfo($file_or_dir);
-        $this->dir_input = files::path_join($pathinfo['dirname'], $pathinfo['filename']); //epub should be unpacked to a dir with the same name as the file
+        $this->dir_input = files::path_join($pathinfo['dirname'], $pathinfo['filename'] . '_watermark');
         $this->dir_output = $this->dir_input . '_cleaned'; //Output dir should be the samed as input with _cleaned added
         $this->epub = new EPUB($file_or_dir, $this->dir_input);
 
