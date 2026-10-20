@@ -72,12 +72,10 @@ class remove_epub_watermark
 		if(isset($pages))
 			return $pages;
 	}
-	function delete_dir($path)
-	{
-		if (PHP_OS === 'WINNT')
-			exec(sprintf('rd /s /q "%s"',$path));
-		else
-			exec(sprintf('rm -rf "%s"',$path));
+	function delete_dir($path): void
+    {
+        $filesystem = new Filesystem\Filesystem();
+        $filesystem->remove($path);
 	}
 
     /**
