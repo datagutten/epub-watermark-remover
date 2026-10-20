@@ -42,6 +42,8 @@ class remove_epub_watermark
 			$dir_from=$this->dir_input;
 		if($dir_to===false)
 			$dir_to=$this->dir_output;
+
+        $pages = [];
 		foreach(scandir($dir_from) as $file)
 		{
 			$extension=pathinfo($file,PATHINFO_EXTENSION);
@@ -69,8 +71,8 @@ class remove_epub_watermark
 			elseif(!in_array($file, ['.', '..']))
 				echo "Not copying $file ($extension)\n";
 		}
-		if(isset($pages))
-			return $pages;
+
+        return $pages;
 	}
 	function delete_dir($path): void
     {
